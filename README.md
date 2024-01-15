@@ -5,6 +5,10 @@ A simple webapp to view biological sequences that can also generate a 100% conse
 between the sequences that are selected. This program was inspired by the SeaView
 application (https://doua.prabi.fr/software/seaview), but did not use any part of it.
 
+#### Screenshot:
+![](screenshot/screenshot_1.jpg)
+![](screenshot/screenshot_2.jpg)
+
 ## Usage
 This program runs on the Flask framework within python, so you need to make sure flask was
 installed using:
