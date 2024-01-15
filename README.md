@@ -2,8 +2,8 @@
 
 #### Description:
 A simple webapp to view biological sequences that can also generate a 100% consensus sequence
-between the sequences that are selected. This program was inspired by the seaviewer
-application, but did not use any part of it.
+between the sequences that are selected. This program was inspired by the SeaView
+application (https://doua.prabi.fr/software/seaview), but did not use any part of it.
 
 ## Usage
 This program runs on the Flask framework within python, so you need to make sure flask was
