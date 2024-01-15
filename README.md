@@ -6,14 +6,20 @@ between the sequences that are selected. This program was inspired by the seavie
 application, but did not use any part of it.
 
 ## Usage
-This program runs on the Flask framework within python, to run the web-server type the
-following command on the terminal:
+This program runs on the Flask framework within python, so you need to make sure flask was
+installed using:
 
 ```
-Flask run
+pip install Flask
 ```
 
-The access the server from the browser at the link printed in the terminal
+To run the web-server type the following command on the terminal:
+
+```
+python -m flask run
+```
+
+Then access the server from the browser at the link printed in the terminal.
 
 ## Documentation
 ### app.py
