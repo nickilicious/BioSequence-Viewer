@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="display-4">BioSequence Viewer</h1>
+  <p class="lead">Upload .clw, .aln or .fst files to visualize and analyze</p>
+  <hr class="my-4">
+  <p>Upload a file to get started!</p>
+  <form method="POST" action="/view" enctype="multipart/form-data">
+    <div class="mb-3">
+      <input type="file" class="form-control" id="file" name="file" accept=".clw,.aln,.fst">
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+  </form>
+</div>
+{% endblock %}

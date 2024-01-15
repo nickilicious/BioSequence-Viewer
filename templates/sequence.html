@@ -1,0 +1,338 @@
+{% extends 'layout.html' %}
+
+{% block title %} Sequence {% endblock %}
+
+{% block styles %}
+<style>
+  body {
+   margin-bottom: 57.6px;
+  }
+
+  th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  td {
+    text-align: center;
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+    z-index: 1000; /* Ensure it's above other elements */
+  }
+
+    /* Responsive styles for smaller screens */
+    @media screen and (max-width: 600px) {
+
+      .bottom-bar div {
+        margin: 5px;
+      }
+
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ChatGPT, Claude AI and Github copilot assisted with the implemenation of this code -->
+
+<table class="table table-bordered">
+  <thead class="table-secondary">
+    <tr>
+      <th></th>
+      <th>Sequences</th>
+      {% for seq in range(sequences[0].seq|length) %}
+      <th style="text-align: center">{{ loop.index }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+
+  <tbody>
+
+    {% for seq in sequences %}
+    <tr>
+      <td>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox">
+        </div>
+      </td>
+      <th>{{ seq.name }}</th>
+      {% for letter in seq.seq %}
+      {% if letter == 'A' %}
+      <td style="background-color: orange;">{{ letter }}</td>
+      {% elif letter == 'C' %}
+      <td style="background-color: green;">{{ letter }}</td>
+      {% elif letter == 'D' %}
+      <td style="background-color: red;">{{ letter }}</td>
+      {% elif letter == 'E' %}
+      <td style="background-color: purple;">{{ letter }}</td>
+      {% elif letter == 'F' %}
+      <td style="background-color: blue;">{{ letter }}</td>
+      {% elif letter == 'G' %}
+      <td style="background-color: yellow;">{{ letter }}</td>
+      {% elif letter == 'H' %}
+      <td style="background-color: pink;">{{ letter }}</td>
+      {% elif letter == 'I' %}
+      <td style="background-color: lightblue;">{{ letter }}</td>
+      {% elif letter == 'K' %}
+      <td style="background-color: darkorange;">{{ letter }}</td>
+      {% elif letter == 'L' %}
+      <td style="background-color: lightgreen;">{{ letter }}</td>
+      {% elif letter == 'M' %}
+      <td style="background-color: brown;">{{ letter }}</td>
+      {% elif letter == 'N' %}
+      <td style="background-color: cyan;">{{ letter }}</td>
+      {% elif letter == 'P' %}
+      <td style="background-color: magenta;">{{ letter }}</td>
+      {% elif letter == 'Q' %}
+      <td style="background-color: lime;">{{ letter }}</td>
+      {% elif letter == 'R' %}
+      <td style="background-color: salmon;">{{ letter }}</td>
+      {% elif letter == 'S' %}
+      <td style="background-color: gold;">{{ letter }}</td>
+      {% elif letter == 'T' %}
+      <td style="background-color: lavender;">{{ letter }}</td>
+      {% elif letter == 'V' %}
+      <td style="background-color: coral;">{{ letter }}</td>
+      {% elif letter == 'W' %}
+      <td style="background-color: slategray;">{{ letter }}</td>
+      {% elif letter == 'Y' %}
+      <td style="background-color: orchid;">{{ letter }}</td>
+      {% else %}
+      <td>{{ letter }}</td>
+      {% endif %}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+<div class="bottom-bar">
+  <div style="display: inline-block;">
+    <button class="btn btn-light zoom" id="zoomInBtn" style="width: 37.6px; height: 37.6px;">+</button>
+    <button class="btn btn-light zoom" id="zoomOutBtn" style="width: 37.6px; height: 37.6px;">-</button>
+  </div>
+  <div style="display: inline-block; float: right;">
+    <button class="btn btn-light" id="remove">Remove sequence</button>
+  </div>
+  <div style="display: inline-block; float: right; margin-right: 5px;">
+    <button class="btn btn-light" id="consensus">Generate consensus sequence</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // Implement zoom
+    const table = document.querySelector('.table');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+
+    let zoomLevel = 1;
+
+    zoomInBtn.addEventListener('click', function() {
+      zoomLevel += 0.1;
+      applyTransform();
+    });
+
+    zoomOutBtn.addEventListener('click', function() {
+      zoomLevel -= 0.1;
+      applyTransform();
+    });
+
+    function applyTransform() {
+      table.style.transformOrigin = `top left`;
+
+      table.style.transition = 'transform 0.3s ease';
+      table.style.transform = `scale(${zoomLevel})`;
+    }
+
+    // Implement row selection
+    const checkboxes = document.querySelectorAll('.form-check-input');
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('click', handleCheck);
+    });
+
+    function handleCheck(e) {
+      const tbody = document.querySelector('tbody');
+      const rowIndex = e.target.closest('tr').rowIndex - 1;
+
+      const row = tbody.rows[rowIndex];
+      row.classList.toggle('table-active');
+    }
+
+    //Implement row removal
+    const removeBtn = document.getElementById('remove');
+
+    removeBtn.addEventListener('click', function() {
+        const tbody = document.querySelector('tbody');
+
+        // Get selected rows
+        const selectedRows = tbody.querySelectorAll('.table-active');
+
+        selectedRows.forEach(row => row.remove());
+    });
+
+    //Generate a consensus sequence from selected rows
+    //letters must exactly match between the sequences in order to be included in the consensus sequence
+    const consensusBtn = document.getElementById('consensus');
+
+    consensusBtn.addEventListener('click', function() {
+      const tbody = document.querySelector('tbody');
+
+      // Get selected rows
+      const selectedRows = tbody.querySelectorAll('.table-active');
+
+      let consensus = {};
+
+      // Find common letters in each column of the selected rows
+      for (let i = 2; i < selectedRows[0].cells.length; i++) {
+          let letters = [];
+          for (let j = 0; j < selectedRows.length; j++) {
+              letters.push(selectedRows[j].cells[i].innerText);
+          }
+          if (letters.every(letter => letter === letters[0])) {
+              consensus[i-2] = letters[0];
+          }
+      }
+
+      // Store the consensus sequence
+      let consensusSeq = '';
+      for (let i = 0; i < selectedRows[0].cells.length - 2; i++) {
+          if (consensus[i]) {
+              consensusSeq += consensus[i];
+
+          // If no consenus is found, replace with an X
+          } else {
+              consensusSeq += 'X';
+          }
+      }
+
+      // Insert new consensus row
+      const newRow = tbody.insertRow();
+
+      const div = document.createElement('div')
+      div.classList.add('form-check');
+      const checkbox = document.createElement('input');
+      checkbox.classList.add('form-check-input');
+      checkbox.type = 'checkbox';
+      div.appendChild(checkbox);
+      const cell = newRow.insertCell();
+      cell.appendChild(div);
+      checkbox.addEventListener('click', handleCheck);
+
+      const th = document.createElement('th');
+      th.innerHTML = 'Consensus';
+      newRow.appendChild(th);
+
+      // Insert consensus sequence matching the color scheme
+      for (let i = 0; i < consensusSeq.length; i++) {
+
+          let newCell = newRow.insertCell();
+
+          if (consensusSeq[i] === 'A') {
+              newCell.innerHTML = 'A';
+              newCell.style.backgroundColor = 'orange';
+
+          } else if (consensusSeq[i] === 'C') {
+              newCell.innerHTML = 'C';
+              newCell.style.backgroundColor = 'green';
+
+          } else if (consensusSeq[i] === 'D') {
+              newCell.innerHTML = 'D';
+              newCell.style.backgroundColor = 'red';
+
+          } else if (consensusSeq[i] === 'E') {
+              newCell.innerHTML = 'E';
+              newCell.style.backgroundColor = 'purple';
+
+          } else if (consensusSeq[i] === 'F') {
+              newCell.innerHTML = 'F';
+              newCell.style.backgroundColor = 'blue';
+
+          } else if (consensusSeq[i] === 'G') {
+              newCell.innerHTML = 'G';
+              newCell.style.backgroundColor = 'yellow';
+
+          } else if (consensusSeq[i] === 'H') {
+              newCell.innerHTML = 'H';
+              newCell.style.backgroundColor = 'pink';
+
+          } else if (consensusSeq[i] === 'I') {
+              newCell.innerHTML = 'I';
+              newCell.style.backgroundColor = 'lightblue';
+
+          } else if (consensusSeq[i] === 'K') {
+              newCell.innerHTML = 'K';
+              newCell.style.backgroundColor = 'darkorange';
+
+          } else if (consensusSeq[i] === 'L') {
+              newCell.innerHTML = 'L';
+              newCell.style.backgroundColor = 'lightgreen';
+
+          } else if (consensusSeq[i] === 'M') {
+              newCell.innerHTML = 'M';
+              newCell.style.backgroundColor = 'brown';
+
+          } else if (consensusSeq[i] === 'N') {
+              newCell.innerHTML = 'N';
+              newCell.style.backgroundColor = 'cyan';
+
+          } else if (consensusSeq[i] === 'P') {
+              newCell.innerHTML = 'P';
+              newCell.style.backgroundColor = 'magenta';
+
+          } else if (consensusSeq[i] === 'Q') {
+              newCell.innerHTML = 'Q';
+              newCell.style.backgroundColor = 'lime';
+
+          } else if (consensusSeq[i] === 'R') {
+              newCell.innerHTML = 'R';
+              newCell.style.backgroundColor = 'salmon';
+
+          } else if (consensusSeq[i] === 'S') {
+              newCell.innerHTML = 'S';
+              newCell.style.backgroundColor = 'gold';
+
+          } else if (consensusSeq[i] === 'T') {
+              newCell.innerHTML = 'T';
+              newCell.style.backgroundColor = 'lavender';
+
+          } else if (consensusSeq[i] === 'V') {
+              newCell.innerHTML = 'V';
+              newCell.style.backgroundColor = 'coral';
+
+          } else if (consensusSeq[i] === 'W') {
+              newCell.innerHTML = 'W';
+              newCell.style.backgroundColor = 'slategray';
+
+          } else if (consensusSeq[i] === 'Y') {
+              newCell.innerHTML = 'Y';
+              newCell.style.backgroundColor = 'orchid';
+
+          } else {
+              newCell.innerHTML = 'X';
+          }
+
+      }
+  });
+});
+</script>
+{% endblock %}
