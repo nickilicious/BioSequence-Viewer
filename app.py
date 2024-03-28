@@ -19,7 +19,7 @@ def sequence():
         elif file.filename.endswith('.aln'):
             sequences = parse_aln(file)
             return render_template('sequence.html', sequences=sequences)
-        elif file.filename.endswith('.fst'):
+        elif file.filename.endswith('.fst') or file.filename.endswith('.fsta'):
             sequences = parse_fst(file)
             return render_template('sequence.html', sequences=sequences)
 
